@@ -1,7 +1,25 @@
 const names = document.getElementById("names");
+const className = document.getElementById("className");
+const saveClass = document.getElementById("saveClass");
+const classPicker = document.getElementById("classPicker");
 const namePick = document.getElementById("namePick");
 const groupPick = document.getElementById("groupPick");
 const output = document.getElementById("output");
+
+function saveClasses() {
+  localStorage.setItem("namePickerClasses", JSON.stringify(classes));
+}
+
+function loadClasses() {
+  const saved = localStorage.getItem("namePickerClasses");
+  if (saved === null) {
+    return {};
+  } else {
+    return JSON.parse(saved);
+  }
+}
+
+let classes = loadClasses();
 
 function cleanList() {
   const namesList = names.value.split("\n");
@@ -23,6 +41,26 @@ function shuffle(list) {
   }
   return list;
 }
+
+function showClassOptions() {
+  classPicker.innerHTML = ""; // clear old options so they don't double up
+
+  const first = document.createElement("option");
+  first.textContent = "Choose a saved class";
+  first.value = "";
+  classPicker.appendChild(first);
+
+  const classNames = Object.keys(classes); // list of class names, using Object.keys
+
+  for (let i = 0; i < classNames.length; i++) {
+    const opt = document.createElement("option");
+    opt.textContent = classNames[i]; // the class name at position i
+    opt.value = classNames[i]; // same thing
+    classPicker.appendChild(opt);
+  }
+}
+
+showClassOptions();
 
 namePick.addEventListener("click", function () {
   const cleanNamesList = cleanList();
@@ -59,4 +97,30 @@ groupPick.addEventListener("click", function () {
     }
     output.textContent = lines.join("\n");
   }
+});
+
+saveClass.addEventListener("click", function () {
+  const name = className.value.trim();
+  const students = cleanList();
+
+  if (name === "" || students.length === 0) {
+    output.textContent = "Enter a class name and some names";
+    return;
+  }
+
+  classes[name] = students;
+  saveClasses();
+  showClassOptions();
+  output.textContent = "Saved " + name;
+});
+
+classPicker.addEventListener("change", function () {
+  const picked = classPicker.value;
+  if (picked === "") {
+    return;
+  }
+
+  const students = classes[picked];
+  names.value = students.join("\n");
+  className.value = picked;
 });
