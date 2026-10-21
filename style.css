@@ -1,34 +1,300 @@
-#output {
-  white-space: pre-line;
+/* ---------- Colors and basics ---------- */
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --border: #e3e6eb;
+  --text: #1f2933;
+  --muted: #6b7280;
+  --accent: #2f6fde;
+  --accent-hover: #2459b8;
+  --accent-soft: #eaf1fd;
+  --danger: #c2410c;
+  --danger-soft: #fdeee6;
+  --radius: 12px;
 }
 
-#roster {
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Header ---------- */
+.top {
+  padding: 18px 32px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.top h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+/* ---------- Two-column layout ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 32px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.panel h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+/* ---------- Form fields ---------- */
+label {
+  display: block;
+  margin: 16px 0 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.hint {
+  font-weight: 400;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row > select,
+.row > input {
+  flex: 1;
+  min-width: 0;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 260px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.btn-secondary:hover {
+  background: #dbe7fb;
+}
+
+.btn-quiet {
+  background: transparent;
+  color: var(--muted);
+  border-color: var(--border);
+}
+
+.btn-quiet:hover {
+  color: var(--text);
+  border-color: #c9ced6;
+}
+
+#deleteClass:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-big {
+  font-size: 1.1rem;
+  padding: 14px 26px;
+}
+
+/* ---------- Pick / group controls ---------- */
+.actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.group-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin: 12px 0;
 }
 
-#roster div {
-  border: 1px solid #999;
+.group-controls label {
+  margin: 0;
+}
+
+#groupSize {
+  width: 72px;
+  text-align: center;
+}
+
+/* ---------- Result area (big enough for a projector) ---------- */
+#output {
+  white-space: pre-line;
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  min-height: 3.5rem;
+  margin: 28px 0;
+}
+
+#output:empty::before {
+  content: "Pick a name or make groups to get started";
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* ---------- Groups ---------- */
+#groupsArea {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.group {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  min-height: 120px;
+}
+
+.group h3 {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  font-size: 1.15rem;
+  font-weight: 500;
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 10px;
-  background: #f4f4f4;
+  cursor: grab;
 }
 
-#roster div button {
+.member:active {
+  cursor: grabbing;
+}
+
+/* × button: only shows on hover */
+.member button {
   visibility: hidden;
-  margin-left: 6px;
-  border: none;
+  padding: 0 6px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
   background: none;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-#roster div:hover button {
+.member:hover button {
   visibility: visible;
 }
 
-.absent {
-  text-decoration: line-through;
-  opacity: 0.4;
+.member button:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* Touchscreens can't hover, so always show the × there */
+@media (hover: none) {
+  .member button {
+    visibility: visible;
+  }
+}
+
+/* ---------- Small screens: stack the two panels ---------- */
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .top {
+    padding: 16px;
+  }
+
+  #output {
+    font-size: 1.75rem;
+  }
 }

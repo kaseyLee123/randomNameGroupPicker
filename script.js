@@ -1,42 +1,70 @@
 const names = document.getElementById("names");
-const roster = document.getElementById("roster");
+const groupsArea = document.getElementById("groupsArea");
 const className = document.getElementById("className");
 const saveClass = document.getElementById("saveClass");
 const deleteClass = document.getElementById("deleteClass");
 const classPicker = document.getElementById("classPicker");
 const namePick = document.getElementById("namePick");
 const groupPick = document.getElementById("groupPick");
+const resetAbsent = document.getElementById("resetAbsent");
 const output = document.getElementById("output");
 
-function showRoster() {
-  roster.innerHTML = "";
-  const list = cleanList();
+function showGroups() {
+  groupsArea.innerHTML = "";
 
-  for (let i = 0; i < list.length; i++) {
-    const name = list[i];
-    const box = document.createElement("div");
-    box.textContent = name;
+  for (let g = 0; g < groups.length; g++) {
+    const groupBox = document.createElement("div");
+    groupBox.classList.add("group");
 
-    if (absent.includes(name)) {
-      box.classList.add("absent");
+    const title = document.createElement("h3");
+    title.textContent = "Group " + (g + 1);
+    groupBox.appendChild(title);
+
+    for (let i = 0; i < groups[g].length; i++) {
+      const nameBox = document.createElement("div");
+      nameBox.classList.add("member");
+      nameBox.textContent = groups[g][i];
+
+      // make this name draggable
+      nameBox.draggable = true;
+      nameBox.addEventListener("dragstart", function (e) {
+        dragged = { group: g, index: i };
+        e.dataTransfer.setData("text/plain", groups[g][i]);
+      });
+
+      // × button: remove from group and mark absent
+      const x = document.createElement("button");
+      x.textContent = "×";
+      x.addEventListener("click", function () {
+        const removed = groups[g].splice(i, 1)[0];
+        absent.push(removed);
+        showGroups();
+        output.textContent = "Absent: " + absent.join(", ");
+      });
+      nameBox.appendChild(x);
+
+      groupBox.appendChild(nameBox);
     }
 
-    const x = document.createElement("button");
-    x.textContent = "×";
-
-    x.addEventListener("click", function () {
-      if (absent.includes(name)) {
-        absent = absent.filter(function (a) {
-          return a !== name; // keep every name that is NOT this one
-        });
-      } else {
-        absent.push(name); // mark this name absent
-      }
-      showRoster();
+    // let this group box accept drops
+    groupBox.addEventListener("dragover", function (e) {
+      e.preventDefault();
     });
 
-    box.appendChild(x);
-    roster.appendChild(box);
+    groupBox.addEventListener("drop", function (e) {
+      e.preventDefault();
+      if (dragged === null) {
+        return;
+      }
+
+      const moved = groups[dragged.group].splice(dragged.index, 1)[0];
+      groups[g].push(moved);
+
+      dragged = null;
+      showGroups();
+    });
+
+    groupsArea.appendChild(groupBox);
   }
 }
 
@@ -55,6 +83,8 @@ function loadClasses() {
 
 let classes = loadClasses();
 let absent = [];
+let groups = [];
+let dragged = null;
 
 function cleanList() {
   const namesList = names.value.split("\n");
@@ -69,7 +99,7 @@ function cleanList() {
 
 function presentList() {
   return cleanList().filter(function (n) {
-    return !absent.includes(n); // keep n if absent does NOT include it
+    return !absent.includes(n);
   });
 }
 
@@ -84,25 +114,24 @@ function shuffle(list) {
 }
 
 function showClassOptions() {
-  classPicker.innerHTML = ""; // clear old options so they don't double up
+  classPicker.innerHTML = "";
 
   const first = document.createElement("option");
   first.textContent = "Choose a saved class";
   first.value = "";
   classPicker.appendChild(first);
 
-  const classNames = Object.keys(classes); // list of class names, using Object.keys
+  const classNames = Object.keys(classes);
 
   for (let i = 0; i < classNames.length; i++) {
     const opt = document.createElement("option");
-    opt.textContent = classNames[i]; // the class name at position i
-    opt.value = classNames[i]; // same thing
+    opt.textContent = classNames[i];
+    opt.value = classNames[i];
     classPicker.appendChild(opt);
   }
 }
 
 showClassOptions();
-showRoster();
 
 namePick.addEventListener("click", function () {
   const cleanNamesList = presentList();
@@ -124,20 +153,17 @@ groupPick.addEventListener("click", function () {
   } else if (groupNumber <= 0 || groupNumber > shuffledNamesList.length) {
     output.textContent = "Please enter group number";
   } else {
-    const groupsList = [];
+    groups = [];
     for (let g = 0; g < groupNumber; g++) {
-      groupsList.push([]);
+      groups.push([]);
     }
     for (let i = 0; i < shuffledNamesList.length; i++) {
       const currentGroup = i % groupNumber;
-      groupsList[currentGroup].push(shuffledNamesList[i]);
+      groups[currentGroup].push(shuffledNamesList[i]);
     }
 
-    const lines = [];
-    for (let g = 0; g < groupsList.length; g++) {
-      lines.push("Group " + (g + 1) + ": " + groupsList[g].join(", "));
-    }
-    output.textContent = lines.join("\n");
+    output.textContent = "";
+    showGroups();
   }
 });
 
@@ -176,7 +202,6 @@ deleteClass.addEventListener("click", function () {
   className.value = "";
   output.textContent = "Deleted " + current;
   absent = [];
-  showRoster();
 });
 
 classPicker.addEventListener("change", function () {
@@ -189,7 +214,9 @@ classPicker.addEventListener("change", function () {
   names.value = students.join("\n");
   className.value = picked;
   absent = [];
-  showRoster();
 });
 
-names.addEventListener("input", showRoster);
+resetAbsent.addEventListener("click", function () {
+  absent = [];
+  output.textContent = "Everyone is back";
+});

@@ -3,20 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Name &amp; Group Picker</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <textarea id="names"></textarea>
-    <div id="roster"></div>
-    <input id="className" type="text" placeholder="Class name" />
-    <button id="saveClass">Save class</button>
-    <button id="deleteClass">Delete class</button>
-    <select id="classPicker"></select>
-    <button id="namePick">Pick A Name</button>
-    <button id="groupPick">Pick Groups</button>
-    <input type="number" id="groupSize" min="2" value="3" />
-    <p id="output"></p>
+    <header class="top">
+      <h1>Name &amp; Group Picker</h1>
+    </header>
+
+    <main class="layout">
+      <!-- Left: the class list -->
+      <section class="panel">
+        <h2>Class list</h2>
+
+        <label for="classPicker">Saved classes</label>
+        <div class="row">
+          <select id="classPicker"></select>
+          <button id="deleteClass" class="btn btn-quiet">Delete</button>
+        </div>
+
+        <label for="names"
+          >Students <span class="hint">· one name per line</span></label
+        >
+        <textarea id="names" placeholder="Alex&#10;Jordan&#10;Sam"></textarea>
+
+        <label for="className">Class name</label>
+        <div class="row">
+          <input
+            id="className"
+            type="text"
+            placeholder="e.g. Block C - CS Seminar"
+          />
+          <button id="saveClass" class="btn btn-secondary">Save class</button>
+        </div>
+      </section>
+
+      <!-- Right: picking and groups -->
+      <section class="panel">
+        <div class="actions">
+          <button id="namePick" class="btn btn-primary btn-big">
+            Pick a name
+          </button>
+
+          <div class="group-controls">
+            <label for="groupSize">Number of groups</label>
+            <input type="number" id="groupSize" min="1" value="3" />
+            <button id="groupPick" class="btn btn-primary">Make groups</button>
+            <button id="resetAbsent" class="btn btn-quiet">
+              Reset absences
+            </button>
+          </div>
+        </div>
+
+        <p id="output" aria-live="polite"></p>
+        <div id="groupsArea"></div>
+      </section>
+    </main>
 
     <script src="script.js"></script>
   </body>
